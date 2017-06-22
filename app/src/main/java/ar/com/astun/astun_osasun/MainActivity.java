@@ -1,61 +1,93 @@
 package ar.com.astun.astun_osasun;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-
+import android.content.Context;
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
+import android.net.Uri;
 
-public class MainActivity extends AppCompatActivity {
-    // Remove the below line after defining your own ad unit ID.
-    private static final String TOAST_TEXT = "Test ads are being shown. "
-            + "To show live ads, replace the ad unit ID in res/values/strings.xml with your own ad unit ID.";
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int START_LEVEL = 1;
-    private int mLevel;
-    private Button mNextLevelButton;
-    private InterstitialAd mInterstitialAd;
-    private TextView mLevelTextView;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
+    FragmentManager mFragmentManager;
+    FragmentTransaction mFragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Create the next level button, which tries to show an interstitial when clicked.
-        mNextLevelButton = ((Button) findViewById(R.id.next_level_button));
-        mNextLevelButton.setEnabled(false);
-        mNextLevelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showInterstitial();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        cargaBackground();
+
+        Thread timerTread = new Thread(){
+            public void run(){
+                try{
+                    sleep(3000);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                } finally {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            mFragmentManager = getSupportFragmentManager();
+                            mFragmentTransaction = mFragmentManager.beginTransaction();
+                            mFragmentTransaction.replace(R.id.content_frame,new TabFragment()).commit();
+
+                        }
+                    });
+                }
             }
-        });
+        };
+        timerTread.start();
 
-        // Create the text view to show the level number.
-        mLevelTextView = (TextView) findViewById(R.id.level);
-        mLevel = START_LEVEL;
-
-        // Create the InterstitialAd and set the adUnitId (defined in values/strings.xml).
-        mInterstitialAd = newInterstitialAd();
-        loadInterstitial();
-
-        // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
-        Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -66,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -73,51 +106,81 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private InterstitialAd newInterstitialAd() {
-        InterstitialAd interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                mNextLevelButton.setEnabled(true);
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        //creating fragment object
+        Fragment fragment = null;
+
+        if (id == R.id.nav_1) {
+            fragment = new EnConstruccion();
+
+            if (fragment != null) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        } else if (id == R.id.nav_2) {
+            fragment = new EnConstruccion();
+
+            if (fragment != null) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        } else if (id == R.id.nav_3) {
+            fragment = new EnConstruccion();
+
+            if (fragment != null) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        } else if (id == R.id.nav_4) {
+            fragment = new EnConstruccion();
+
+            if (fragment != null) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
             }
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                mNextLevelButton.setEnabled(true);
-            }
+        } else if (id == R.id.nav_send) {
 
-            @Override
-            public void onAdClosed() {
-                // Proceed to the next level.
-                goToNextLevel();
-            }
-        });
-        return interstitialAd;
-    }
-
-    private void showInterstitial() {
-        // Show the ad if it's ready. Otherwise toast and reload the ad.
-        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-            Toast.makeText(this, "Ad did not load", Toast.LENGTH_SHORT).show();
-            goToNextLevel();
+            String link = "http://www.astun.com.ar";
+            Intent intent = null;
+            intent = new Intent(intent.ACTION_VIEW,Uri.parse(link));
+            startActivity(intent);
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
-    private void loadInterstitial() {
-        // Disable the next level button and load the ad.
-        mNextLevelButton.setEnabled(false);
-        AdRequest adRequest = new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build();
-        mInterstitialAd.loadAd(adRequest);
-    }
+    public void cargaBackground(){
 
-    private void goToNextLevel() {
-        // Show the next level and reload the ad to prepare for the level after.
-        mLevelTextView.setText("Level " + (++mLevel));
-        mInterstitialAd = newInterstitialAd();
-        loadInterstitial();
+        Fragment fragment = null;
+
+        fragment = new PresentacionActivity();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
     }
 }

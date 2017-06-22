@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Músculos">
+        <menu>
+        <item
+            android:id="@+id/nav_1"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Extremidades Superiores" />
+        <item
+            android:id="@+id/nav_2"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Tronco" />
+        <item
+            android:id="@+id/nav_3"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Extremidades Inferiores" />
+        </menu>
+    </item>
+    <item android:title="Mi rutina">
+        <menu>
+            <item
+                android:id="@+id/nav_4"
+                android:icon="@android:drawable/ic_menu_edit"
+                android:title="Mi rutina"/>
+        </menu>
+    </item>
+    <item android:title="Contactanos">
+        <menu>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_share"
+                android:title="www.astun.com.ar" />
+        </menu>
+    </item>
+
+</menu>
